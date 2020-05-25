@@ -1,0 +1,2 @@
+rootProject.name='Mercury_Task3'
+include ':app'
