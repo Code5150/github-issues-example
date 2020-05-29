@@ -9,7 +9,7 @@ import kotlinx.android.synthetic.main.issue_item_card.view.*
 import com.example.mercury_task3.network.data.Issue
 
 class IssueListRecyclerAdapter(
-    private val callbackFun: () -> Unit
+    private val callbackFun: (Int) -> Unit
 ) : RecyclerView.Adapter<IssueListRecyclerAdapter.ItemHolder>() {
     private var items: ArrayList<Issue> = ArrayList()
 
@@ -36,7 +36,9 @@ class IssueListRecyclerAdapter(
         var issueNum: TextView = v.issueNum
         var username: TextView = v.username
 
-        override fun onClick(view: View?) = callbackFun()
+        override fun onClick(view: View?) {
+            callbackFun(adapterPosition)
+        }
 
         init {
             v.setOnClickListener(this)

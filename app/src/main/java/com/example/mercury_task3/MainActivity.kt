@@ -1,8 +1,8 @@
 package com.example.mercury_task3
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.transition.Visibility
 import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.Observer
@@ -10,7 +10,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -19,6 +18,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var repoIssuesRecyclerView: RecyclerView
     private lateinit var textView: TextView
     private lateinit var issueViewModel: IssueViewModel
+
+    companion object{
+        const val ISSUE_POS: String = "ISSUE_NUM"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,13 +33,14 @@ class MainActivity : AppCompatActivity() {
 
         textView = findViewById<TextView>(R.id.textView)
 
-        val issueOnClickFun = {
-
-        }
-
         issueViewModel = ViewModelProvider(this).get(IssueViewModel::class.java)
 
-        val adapter = IssueListRecyclerAdapter(issueOnClickFun)
+        val adapter = IssueListRecyclerAdapter{ pos ->
+            println("Clicked: $pos")
+            val intent = Intent(this, DetailsActivity::class.java)
+            intent.putExtra(ISSUE_POS, pos)
+            startActivity(intent)
+        }
         repoIssuesRecyclerView.adapter = adapter
 
         issueViewModel.issuesData.observe(this, Observer {
@@ -52,13 +56,10 @@ class MainActivity : AppCompatActivity() {
         swipeRefreshLayout.setOnRefreshListener {
             GlobalScope.launch {
                 swipeRefreshLayout.isRefreshing = true
-                issueViewModel.updateIssuesList()
+                IssueViewModel.updateIssuesList()
                 swipeRefreshLayout.isRefreshing = false
             }
         }
-
-
-
     }
 
     private fun setRecyclerVisibility(size: Int?){
