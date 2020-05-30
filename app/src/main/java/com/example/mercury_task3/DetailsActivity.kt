@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
-import java.lang.Exception
 
 class DetailsActivity : AppCompatActivity() {
 
@@ -15,29 +14,29 @@ class DetailsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_details)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val pos = intent.getIntExtra(MainActivity.ISSUE_POS, -1)
+        val pos = intent.getIntExtra(MainActivity.CLICKED_ISSUE_POS, -1)
 
         val issueViewModel = ViewModelProvider(this).get(IssueViewModel::class.java)
-        try {
-            val data = issueViewModel.issuesData.value!![pos]
 
-            val numberText: TextView = findViewById(R.id.number)
-            val createdText: TextView = findViewById(R.id.created)
-            val updatedText: TextView = findViewById(R.id.updated)
-            val closedText: TextView = findViewById(R.id.deleted)
-            val titleText: TextView = findViewById(R.id.issueTitle)
-            val bodyText: TextView = findViewById(R.id.issueBody)
+        val data = issueViewModel.issuesData.value!![pos]
 
-            numberText.text = getString(R.string.number, data.number)
-            createdText.text = getString(R.string.created_at) + " ${data.created_at}"
-            updatedText.text = getString(R.string.updated_at) + " ${data.updated_at.toString()}"
-            closedText.text = getString(R.string.closed_at) + " ${data.closed_at.toString()}"
-            titleText.text = data.title
-            bodyText.text = data.body
-        }
-        catch (e: Exception){
-            e.printStackTrace()
-            finish()
-        }
+        val numberText: TextView = findViewById(R.id.number)
+        val createdText: TextView = findViewById(R.id.created)
+        val updatedText: TextView = findViewById(R.id.updated)
+        val closedText: TextView = findViewById(R.id.deleted)
+        val titleText: TextView = findViewById(R.id.issueTitle)
+        val bodyText: TextView = findViewById(R.id.issueBody)
+
+        numberText.text = getString(R.string.number, data.number)
+        createdText.text = getString(R.string.created_at) + " ${data.created_at}"
+        updatedText.text = getString(R.string.updated_at) + " ${data.updated_at.toString()}"
+        closedText.text = getString(R.string.closed_at) + " ${data.closed_at.toString()}"
+        titleText.text = data.title
+        bodyText.text = data.body
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return super.onSupportNavigateUp()
     }
 }

@@ -1,4 +1,4 @@
-package com.example.mercury_task3.network.data
+package com.Code5150.mercury_task3_network.data
 
 data class Issue(
     val body: String,

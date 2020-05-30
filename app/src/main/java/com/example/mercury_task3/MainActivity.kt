@@ -19,8 +19,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var textView: TextView
     private lateinit var issueViewModel: IssueViewModel
 
-    companion object{
-        const val ISSUE_POS: String = "ISSUE_NUM"
+    companion object {
+        const val CLICKED_ISSUE_POS: String = "CLICKED_ISSUE_POS"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,14 +31,14 @@ class MainActivity : AppCompatActivity() {
         repoIssuesRecyclerView.layoutManager = LinearLayoutManager(this)
         repoIssuesRecyclerView.setHasFixedSize(true)
 
-        textView = findViewById<TextView>(R.id.textView)
+        textView = findViewById(R.id.textView)
 
         issueViewModel = ViewModelProvider(this).get(IssueViewModel::class.java)
 
-        val adapter = IssueListRecyclerAdapter{ pos ->
+        val adapter = IssueListRecyclerAdapter { pos ->
             println("Clicked: $pos")
             val intent = Intent(this, DetailsActivity::class.java)
-            intent.putExtra(ISSUE_POS, pos)
+            intent.putExtra(CLICKED_ISSUE_POS, pos)
             startActivity(intent)
         }
         repoIssuesRecyclerView.adapter = adapter
@@ -56,37 +56,30 @@ class MainActivity : AppCompatActivity() {
         swipeRefreshLayout.setOnRefreshListener {
             GlobalScope.launch {
                 swipeRefreshLayout.isRefreshing = true
-                IssueViewModel.updateIssuesList()
+                issueViewModel.updateIssuesList()
                 swipeRefreshLayout.isRefreshing = false
             }
         }
     }
 
-    private fun setRecyclerVisibility(size: Int?){
-        if(size != null) {
-            //если размер ненулевой, то показываем список и скрываем надпись
-            if(size > 0) {
-                if (textView.visibility == View.VISIBLE) textView.visibility = View.INVISIBLE
-                if (repoIssuesRecyclerView.visibility == View.INVISIBLE) repoIssuesRecyclerView.visibility =
-                    View.VISIBLE
-            }
-            //иначе выводим надпись, что ничего не найдено
-            else {
-                textView.text = getString(R.string.no_opened_issues)
-                if (textView.visibility == View.INVISIBLE) textView.visibility = View.VISIBLE
-                if (repoIssuesRecyclerView.visibility == View.VISIBLE) repoIssuesRecyclerView.visibility =
-                    View.INVISIBLE
-            }
-        }
-    }
-
-    private fun setLabelVisibility(err: Boolean){
-        //если ошибка, то скрываем список и показываем надпись
-        if(err){
+    private fun setRecyclerVisibility(size: Int) {
+        if (size > 0) {
+            if (textView.visibility == View.VISIBLE) textView.visibility = View.INVISIBLE
+            if (repoIssuesRecyclerView.visibility == View.INVISIBLE) repoIssuesRecyclerView.visibility =
+                View.VISIBLE
+        } else {
+            textView.text = getString(R.string.no_opened_issues)
             if (textView.visibility == View.INVISIBLE) textView.visibility = View.VISIBLE
             if (repoIssuesRecyclerView.visibility == View.VISIBLE) repoIssuesRecyclerView.visibility =
                 View.INVISIBLE
         }
+    }
 
+    private fun setLabelVisibility(err: Boolean) {
+        if (err) {
+            if (textView.visibility == View.INVISIBLE) textView.visibility = View.VISIBLE
+            if (repoIssuesRecyclerView.visibility == View.VISIBLE) repoIssuesRecyclerView.visibility =
+                View.INVISIBLE
+        }
     }
 }

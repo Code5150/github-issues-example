@@ -1,8 +1,8 @@
 package com.example.mercury_task3
 
 import androidx.lifecycle.*
-import com.example.mercury_task3.network.data.Issue
-import com.example.mercury_task3.network.GithubApiInterface
+import com.Code5150.mercury_task3_network.data.Issue
+import com.Code5150.mercury_task3_network.GithubApiInterface
 
 
 class IssueViewModel : ViewModel() {
@@ -13,27 +13,28 @@ class IssueViewModel : ViewModel() {
 
     companion object {
         private val _issuesData: MutableLiveData<ArrayList<Issue>> = liveData {
-            emit(getIssuesList())
+            emit(apiService.getIssues() as ArrayList<Issue>)
         } as MutableLiveData<ArrayList<Issue>>
 
         private val _error: MutableLiveData<Boolean> = liveData { emit(false) } as MutableLiveData<Boolean>
 
-        private val apiService = GithubApiInterface()
+        private val apiService =
+            GithubApiInterface()
+    }
 
-        private suspend fun getIssuesList(): ArrayList<Issue> {
-            return apiService.getIssues() as ArrayList<Issue>
+    private suspend fun getIssuesList(): ArrayList<Issue> {
+        return apiService.getIssues() as ArrayList<Issue>
+    }
+
+    suspend fun updateIssuesList(){
+        try {
+            _issuesData.postValue(getIssuesList())
+            if(_error.value != null){
+                if(_error.value!!) _error.postValue(false)
+            }
         }
-
-        suspend fun updateIssuesList(){
-            try {
-                _issuesData.postValue(getIssuesList())
-                if(_error.value != null){
-                    if(_error.value!!) _error.postValue(false)
-                }
-            }
-            catch(e: Exception){
-                _error.postValue(true)
-            }
+        catch(e: Exception){
+            _error.postValue(true)
         }
     }
 }
