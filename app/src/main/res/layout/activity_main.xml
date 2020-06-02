@@ -10,6 +10,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         android:text="@string/loading"
         android:textColor="@android:color/black"
         android:textSize="24sp"
@@ -35,8 +36,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:listitem="@layout/issue_item_card"
-            >
+            tools:listitem="@layout/issue_item_card">
 
 
         </androidx.recyclerview.widget.RecyclerView>

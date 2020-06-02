@@ -28,9 +28,9 @@ class DetailsActivity : AppCompatActivity() {
         val bodyText: TextView = findViewById(R.id.issueBody)
 
         numberText.text = getString(R.string.number, data.number)
-        createdText.text = getString(R.string.created_at) + " ${data.created_at}"
-        updatedText.text = getString(R.string.updated_at) + " ${data.updated_at.toString()}"
-        closedText.text = getString(R.string.closed_at) + " ${data.closed_at.toString()}"
+        createdText.text = getString(R.string.created_at) + " ${data.createdAt}"
+        updatedText.text = getString(R.string.updated_at) + " ${data.updatedAt.toString()}"
+        closedText.text = getString(R.string.closed_at) + " ${data.closedAt.toString()}"
         titleText.text = data.title
         bodyText.text = data.body
     }

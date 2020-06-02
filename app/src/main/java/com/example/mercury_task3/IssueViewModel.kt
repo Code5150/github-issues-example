@@ -1,40 +1,45 @@
 package com.example.mercury_task3
 
 import androidx.lifecycle.*
-import com.Code5150.mercury_task3_network.data.Issue
-import com.Code5150.mercury_task3_network.GithubApiInterface
+import com.сode5150.mercury_task3_network.data.Issue
+import com.сode5150.mercury_task3_network.GithubApiInterface
 
 
 class IssueViewModel : ViewModel() {
 
-    val issuesData: LiveData<ArrayList<Issue>> get() = _issuesData
+    val issuesData: LiveData<List<Issue>?> get() = _issuesData
 
-    val error: MutableLiveData<Boolean> get() = _error
+    val error: MutableLiveData<String?> get() = _error
 
     companion object {
-        private val _issuesData: MutableLiveData<ArrayList<Issue>> = liveData {
-            emit(apiService.getIssues() as ArrayList<Issue>)
-        } as MutableLiveData<ArrayList<Issue>>
+        private val _issuesData: MutableLiveData<List<Issue>?> = liveData {
+            emit(_getIssuesList())
+        } as MutableLiveData<List<Issue>?>
 
-        private val _error: MutableLiveData<Boolean> = liveData { emit(false) } as MutableLiveData<Boolean>
+        private val _error: MutableLiveData<String?> =
+            MutableLiveData(null)
 
         private val apiService =
             GithubApiInterface()
-    }
 
-    private suspend fun getIssuesList(): ArrayList<Issue> {
-        return apiService.getIssues() as ArrayList<Issue>
-    }
+        private suspend fun _getIssuesList(): List<Issue>? {
+            var result: List<Issue>? = null
+            try {
+                result = apiService.getIssues()
+                if (_error.value != null) _error.postValue(null)
 
-    suspend fun updateIssuesList(){
-        try {
-            _issuesData.postValue(getIssuesList())
-            if(_error.value != null){
-                if(_error.value!!) _error.postValue(false)
+            } catch (e: Exception) {
+                _error.postValue(e.message)
             }
+            return result
         }
-        catch(e: Exception){
-            _error.postValue(true)
-        }
+    }
+
+    private suspend fun getIssuesList(): List<Issue>? {
+        return _getIssuesList()
+    }
+
+    suspend fun updateIssuesList() {
+        _issuesData.postValue(getIssuesList())
     }
 }

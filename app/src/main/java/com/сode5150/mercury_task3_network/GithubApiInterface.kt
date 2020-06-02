@@ -1,6 +1,7 @@
-package com.Code5150.mercury_task3_network
+package com.сode5150.mercury_task3_network
 
-import com.Code5150.mercury_task3_network.data.Issue
+import com.google.gson.GsonBuilder
+import com.сode5150.mercury_task3_network.data.Issue
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -13,13 +14,14 @@ const val ISSUES: String = "repos/$USER/$REPO/issues"
 
 interface GithubApiInterface {
     @GET(ISSUES)
-    suspend fun getIssues(@Query("state") state: String = "open"):List<Issue>
-    companion object{
+    suspend fun getIssues(@Query("state") state: String = "open"): List<Issue>
+
+    companion object {
         operator fun invoke(): GithubApiInterface {
-            //после билдера: .client(OkHttpClient.Builder().build())
+            val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create()
             return Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build()
                 .create(GithubApiInterface::class.java)
         }

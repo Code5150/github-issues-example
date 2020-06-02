@@ -6,12 +6,12 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.issue_item_card.view.*
-import com.Code5150.mercury_task3_network.data.Issue
+import com.сode5150.mercury_task3_network.data.Issue
 
 class IssueListRecyclerAdapter(
     private val callbackFun: (Int) -> Unit
 ) : RecyclerView.Adapter<IssueListRecyclerAdapter.ItemHolder>() {
-    private var items: ArrayList<Issue> = ArrayList()
+    private var items: List<Issue> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemHolder {
         return ItemHolder(
@@ -26,15 +26,15 @@ class IssueListRecyclerAdapter(
         holder.username.text = items[position].user.login
     }
 
-    fun setItems(newItems: ArrayList<Issue>) {
+    fun setItems(newItems: List<Issue>) {
         items = newItems
         notifyDataSetChanged()
     }
 
     inner class ItemHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {
 
-        var issueNum: TextView = v.issueNum
-        var username: TextView = v.username
+        val issueNum: TextView = v.issueNum
+        val username: TextView = v.username
 
         override fun onClick(view: View?) {
             callbackFun(adapterPosition)

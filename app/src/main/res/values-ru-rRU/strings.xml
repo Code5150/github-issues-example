@@ -2,7 +2,7 @@
     <string name="app_name">Задание 3</string>
     <string name="loading">Загрузка…</string>
     <string name="no_opened_issues">Не найдено открытых issues</string>
-    <string name="err">Ошибка</string>
+    <string name="err">Ошибка: </string>
     <string name="created_at">Создано: </string>
     <string name="updated_at">Обновлено: </string>
     <string name="closed_at">Закрыто: </string>

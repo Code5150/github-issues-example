@@ -1,5 +1,6 @@
 package com.example.mercury_task3
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -36,7 +37,6 @@ class MainActivity : AppCompatActivity() {
         issueViewModel = ViewModelProvider(this).get(IssueViewModel::class.java)
 
         val adapter = IssueListRecyclerAdapter { pos ->
-            println("Clicked: $pos")
             val intent = Intent(this, DetailsActivity::class.java)
             intent.putExtra(CLICKED_ISSUE_POS, pos)
             startActivity(intent)
@@ -44,12 +44,16 @@ class MainActivity : AppCompatActivity() {
         repoIssuesRecyclerView.adapter = adapter
 
         issueViewModel.issuesData.observe(this, Observer {
-            adapter.setItems(it)
-            setRecyclerVisibility(it.size)
+            if (it != null) {
+                adapter.setItems(it)
+                setRecyclerVisibility(it.size)
+            }
         })
 
         issueViewModel.error.observe(this, Observer {
-            setLabelVisibility(it)
+            if (it != null) {
+                setLabelVisibility(it)
+            }
         })
 
         val swipeRefreshLayout: SwipeRefreshLayout = findViewById(R.id.swipeContainer)
@@ -75,11 +79,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setLabelVisibility(err: Boolean) {
-        if (err) {
-            if (textView.visibility == View.INVISIBLE) textView.visibility = View.VISIBLE
-            if (repoIssuesRecyclerView.visibility == View.VISIBLE) repoIssuesRecyclerView.visibility =
-                View.INVISIBLE
-        }
+    @SuppressLint("SetTextI18n")
+    private fun setLabelVisibility(err: String) {
+        textView.text = getString(R.string.err) + "\n$err"
+        if (textView.visibility == View.INVISIBLE) textView.visibility = View.VISIBLE
+        if (repoIssuesRecyclerView.visibility == View.VISIBLE) repoIssuesRecyclerView.visibility =
+            View.INVISIBLE
     }
 }
