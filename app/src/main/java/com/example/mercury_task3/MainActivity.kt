@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var repoIssuesRecyclerView: RecyclerView
     private lateinit var textView: TextView
     private lateinit var issueViewModel: IssueViewModel
+    private lateinit var detailsFragment: DetailsFragment
 
     companion object {
         const val CLICKED_ISSUE_POS: String = "CLICKED_ISSUE_POS"
@@ -44,8 +45,8 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
             else{
-                val detailsFragment = DetailsFragment()
                 val selected = Bundle()
+                detailsFragment = DetailsFragment()
                 selected.putParcelable(CLICKED_ISSUE_POS,  issueViewModel.issuesData.value!![pos])
                 detailsFragment.arguments = selected
                 this.supportFragmentManager.beginTransaction().apply {
@@ -75,6 +76,10 @@ class MainActivity : AppCompatActivity() {
 
         val swipeRefreshLayout: SwipeRefreshLayout = findViewById(R.id.swipeContainer)
         swipeRefreshLayout.setOnRefreshListener {
+            supportFragmentManager.beginTransaction().apply {
+                remove(detailsFragment)
+                commit()
+            }
             GlobalScope.launch {
                 swipeRefreshLayout.isRefreshing = true
                 issueViewModel.updateIssuesList()

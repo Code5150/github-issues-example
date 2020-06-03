@@ -6,20 +6,18 @@
     android:layout_marginStart="8dp"
     android:layout_marginTop="8dp"
     android:layout_marginEnd="8dp"
-
+    android:id="@+id/selectableCard"
+    android:foreground="?selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/selectableCard"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:paddingHorizontal="10dp"
         android:paddingVertical="5dp"
-        android:backgroundTint="#FFFFFF"
-        android:background="?android:attr/selectableItemBackground"
-        android:focusable="true">
+        >
 
         <TextView
             android:id="@+id/issueNum"

@@ -1,9 +1,11 @@
 package com.example.mercury_task3
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.issue_item_card.view.*
@@ -13,6 +15,7 @@ class IssueListRecyclerAdapter(
     private val callbackFun: (Int) -> Unit
 ) : RecyclerView.Adapter<IssueListRecyclerAdapter.ItemHolder>() {
     private var items: List<Issue> = ArrayList()
+    private var selectedPos = RecyclerView.NO_POSITION
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemHolder {
         return ItemHolder(
@@ -25,10 +28,17 @@ class IssueListRecyclerAdapter(
     override fun onBindViewHolder(holder: ItemHolder, position: Int) {
         holder.issueNum.text = items[position].number.toString()
         holder.username.text = items[position].user.login
+        if (selectedPos == position){
+            holder.card.setBackgroundColor(Color.LTGRAY)
+        }
+        else {
+            holder.card.setBackgroundColor(Color.WHITE)
+        }
     }
 
     fun setItems(newItems: List<Issue>) {
         items = newItems
+        selectedPos = RecyclerView.NO_POSITION
         notifyDataSetChanged()
     }
 
@@ -36,8 +46,15 @@ class IssueListRecyclerAdapter(
 
         val issueNum: TextView = v.issueNum
         val username: TextView = v.username
+        val card: CardView = v.selectableCard
 
         override fun onClick(view: View?) {
+            val prevPos = selectedPos
+            selectedPos = adapterPosition
+
+            notifyItemChanged(prevPos)
+            notifyItemChanged(selectedPos)
+
             callbackFun(adapterPosition)
         }
 
