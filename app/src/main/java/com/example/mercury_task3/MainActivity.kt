@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var repoIssuesRecyclerView: RecyclerView
     private lateinit var textView: TextView
     private lateinit var issueViewModel: IssueViewModel
-    private lateinit var detailsFragment: DetailsFragment
+    private var detailsFragment: DetailsFragment? = null
 
     companion object {
         const val CLICKED_ISSUE_POS: String = "CLICKED_ISSUE_POS"
@@ -47,9 +47,9 @@ class MainActivity : AppCompatActivity() {
                 val selected = Bundle()
                 detailsFragment = DetailsFragment()
                 selected.putParcelable(CLICKED_ISSUE_POS, issueViewModel.issuesData.value!![pos])
-                detailsFragment.arguments = selected
+                detailsFragment!!.arguments = selected
                 this.supportFragmentManager.beginTransaction().apply {
-                    replace(R.id.fragmentDetails, detailsFragment)
+                    replace(R.id.fragmentDetails, detailsFragment!!)
                     commit()
                 }
                 Unit
@@ -75,9 +75,11 @@ class MainActivity : AppCompatActivity() {
 
         val swipeRefreshLayout: SwipeRefreshLayout = findViewById(R.id.swipeContainer)
         swipeRefreshLayout.setOnRefreshListener {
-            supportFragmentManager.beginTransaction().apply {
-                remove(detailsFragment)
-                commit()
+            detailsFragment?.let {
+                supportFragmentManager.beginTransaction().apply {
+                    remove(it)
+                    commit()
+                }
             }
             GlobalScope.launch {
                 swipeRefreshLayout.isRefreshing = true
@@ -102,7 +104,7 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun setLabelVisibility(err: String) {
-        textView.text = getString(R.string.err) + "\n$err"
+        textView.text = getString(R.string.err, err)
         if (textView.visibility == View.INVISIBLE) textView.visibility = View.VISIBLE
         if (repoIssuesRecyclerView.visibility == View.VISIBLE) repoIssuesRecyclerView.visibility =
             View.INVISIBLE

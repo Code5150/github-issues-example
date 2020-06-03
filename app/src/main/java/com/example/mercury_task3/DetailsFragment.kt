@@ -39,9 +39,9 @@ class DetailsFragment : Fragment() {
 
         selectedIssue?.let {
             numberText.text = getString(R.string.number, it.number)
-            createdText.text = getString(R.string.created_at) + " ${it.createdAt}"
-            updatedText.text = getString(R.string.updated_at) + " ${it.updatedAt.toString()}"
-            closedText.text = getString(R.string.closed_at) + " ${it.closedAt.toString()}"
+            createdText.text = getString(R.string.created_at, it.createdAt)
+            updatedText.text = getString(R.string.updated_at, it.updatedAt.toString())
+            closedText.text = getString(R.string.closed_at, it.closedAt.toString())
             titleText.text = it.title
             bodyText.text = it.body
         }

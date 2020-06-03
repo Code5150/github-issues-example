@@ -2,9 +2,9 @@
     <string name="app_name">Mercury_Task3</string>
     <string name="loading">Loading…</string>
     <string name="no_opened_issues">No opened issues found</string>
-    <string name="err">Error: </string>
-    <string name="created_at">Created at: </string>
-    <string name="updated_at">Updated at: </string>
-    <string name="closed_at">Closed at: </string>
+    <string name="err" formatted="true">Error: %s</string>
+    <string name="created_at" formatted="true">Created at: %s</string>
+    <string name="updated_at" formatted="true">Updated at: %s</string>
+    <string name="closed_at" formatted="true">Closed at: %s</string>
     <string name="number" translatable="false">#%d</string>
 </resources>

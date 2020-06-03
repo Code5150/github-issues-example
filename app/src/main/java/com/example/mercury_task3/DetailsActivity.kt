@@ -24,12 +24,14 @@ class DetailsActivity : AppCompatActivity() {
         val titleText: TextView = findViewById(R.id.issueTitle)
         val bodyText: TextView = findViewById(R.id.issueBody)
 
-        numberText.text = getString(R.string.number, data.number)
-        createdText.text = getString(R.string.created_at) + " ${data.createdAt}"
-        updatedText.text = getString(R.string.updated_at) + " ${data.updatedAt.toString()}"
-        closedText.text = getString(R.string.closed_at) + " ${data.closedAt.toString()}"
-        titleText.text = data.title
-        bodyText.text = data.body
+        data?.let {
+            numberText.text = getString(R.string.number, it.number)
+            createdText.text = getString(R.string.created_at, it.createdAt)
+            updatedText.text = getString(R.string.updated_at, it.updatedAt.toString())
+            closedText.text = getString(R.string.closed_at, it.closedAt.toString())
+            titleText.text = it.title
+            bodyText.text = it.body
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {
