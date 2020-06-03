@@ -39,15 +39,14 @@ class MainActivity : AppCompatActivity() {
         issueViewModel = ViewModelProvider(this).get(IssueViewModel::class.java)
 
         val onClickFun = { pos: Int ->
-            if(resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
                 val intent = Intent(this, DetailsActivity::class.java)
                 intent.putExtra(CLICKED_ISSUE_POS, issueViewModel.issuesData.value!![pos])
                 startActivity(intent)
-            }
-            else{
+            } else {
                 val selected = Bundle()
                 detailsFragment = DetailsFragment()
-                selected.putParcelable(CLICKED_ISSUE_POS,  issueViewModel.issuesData.value!![pos])
+                selected.putParcelable(CLICKED_ISSUE_POS, issueViewModel.issuesData.value!![pos])
                 detailsFragment.arguments = selected
                 this.supportFragmentManager.beginTransaction().apply {
                     replace(R.id.fragmentDetails, detailsFragment)
@@ -57,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val adapter = IssueListRecyclerAdapter (onClickFun)
+        val adapter = IssueListRecyclerAdapter(onClickFun, resources.configuration.orientation)
 
         repoIssuesRecyclerView.adapter = adapter
 

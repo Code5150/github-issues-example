@@ -1,18 +1,18 @@
 package com.example.mercury_task3
 
+import android.content.res.Configuration
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.issue_item_card.view.*
 import com.сode5150.mercury_task3_network.data.Issue
 
 class IssueListRecyclerAdapter(
-    private val callbackFun: (Int) -> Unit
+    private val callbackFun: (Int) -> Unit, private val orientation: Int
 ) : RecyclerView.Adapter<IssueListRecyclerAdapter.ItemHolder>() {
     private var items: List<Issue> = ArrayList()
     private var selectedPos = RecyclerView.NO_POSITION
@@ -28,11 +28,12 @@ class IssueListRecyclerAdapter(
     override fun onBindViewHolder(holder: ItemHolder, position: Int) {
         holder.issueNum.text = items[position].number.toString()
         holder.username.text = items[position].user.login
-        if (selectedPos == position){
-            holder.card.setBackgroundColor(Color.LTGRAY)
-        }
-        else {
-            holder.card.setBackgroundColor(Color.WHITE)
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            if (selectedPos == position) {
+                holder.card.setBackgroundColor(Color.LTGRAY)
+            } else {
+                holder.card.setBackgroundColor(Color.WHITE)
+            }
         }
     }
 
