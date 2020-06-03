@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import androidx.lifecycle.ViewModelProvider
+import com.сode5150.mercury_task3_network.data.Issue
 
 class DetailsActivity : AppCompatActivity() {
 
@@ -14,11 +15,7 @@ class DetailsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_details)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val pos = intent.getIntExtra(MainActivity.CLICKED_ISSUE_POS, -1)
-
-        val issueViewModel = ViewModelProvider(this).get(IssueViewModel::class.java)
-
-        val data = issueViewModel.issuesData.value!![pos]
+        val data = intent.getParcelableExtra<Issue>(MainActivity.CLICKED_ISSUE_POS)
 
         val numberText: TextView = findViewById(R.id.number)
         val createdText: TextView = findViewById(R.id.created)

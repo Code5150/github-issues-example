@@ -2,6 +2,7 @@ package com.example.mercury_task3
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -36,11 +37,27 @@ class MainActivity : AppCompatActivity() {
 
         issueViewModel = ViewModelProvider(this).get(IssueViewModel::class.java)
 
-        val adapter = IssueListRecyclerAdapter { pos ->
-            val intent = Intent(this, DetailsActivity::class.java)
-            intent.putExtra(CLICKED_ISSUE_POS, pos)
-            startActivity(intent)
+        val onClickFun = { pos: Int ->
+            if(resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
+                val intent = Intent(this, DetailsActivity::class.java)
+                intent.putExtra(CLICKED_ISSUE_POS, issueViewModel.issuesData.value!![pos])
+                startActivity(intent)
+            }
+            else{
+                val detailsFragment = DetailsFragment()
+                val selected = Bundle()
+                selected.putParcelable(CLICKED_ISSUE_POS,  issueViewModel.issuesData.value!![pos])
+                detailsFragment.arguments = selected
+                this.supportFragmentManager.beginTransaction().apply {
+                    replace(R.id.fragmentDetails, detailsFragment)
+                    commit()
+                }
+                Unit
+            }
         }
+
+        val adapter = IssueListRecyclerAdapter (onClickFun)
+
         repoIssuesRecyclerView.adapter = adapter
 
         issueViewModel.issuesData.observe(this, Observer {

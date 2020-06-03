@@ -11,32 +11,26 @@ class IssueViewModel : ViewModel() {
 
     val error: MutableLiveData<String?> get() = _error
 
-    companion object {
-        private val _issuesData: MutableLiveData<List<Issue>?> = liveData {
-            emit(_getIssuesList())
-        } as MutableLiveData<List<Issue>?>
+    private val _issuesData: MutableLiveData<List<Issue>?> = liveData {
+        emit(getIssuesList())
+    } as MutableLiveData<List<Issue>?>
 
-        private val _error: MutableLiveData<String?> =
-            MutableLiveData(null)
+    private val _error: MutableLiveData<String?> =
+        MutableLiveData(null)
 
-        private val apiService =
-            GithubApiInterface()
-
-        private suspend fun _getIssuesList(): List<Issue>? {
-            var result: List<Issue>? = null
-            try {
-                result = apiService.getIssues()
-                if (_error.value != null) _error.postValue(null)
-
-            } catch (e: Exception) {
-                _error.postValue(e.message)
-            }
-            return result
-        }
-    }
+    private val apiService =
+        GithubApiInterface()
 
     private suspend fun getIssuesList(): List<Issue>? {
-        return _getIssuesList()
+        var result: List<Issue>? = null
+        try {
+            result = apiService.getIssues()
+            if (_error.value != null) _error.postValue(null)
+
+        } catch (e: Exception) {
+            _error.postValue(e.message)
+        }
+        return result
     }
 
     suspend fun updateIssuesList() {
