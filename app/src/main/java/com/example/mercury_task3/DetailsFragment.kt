@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.сode5150.mercury_task3_network.data.Issue
+import java.text.DateFormat
 
 /**
  * A simple [Fragment] subclass.
@@ -38,10 +39,21 @@ class DetailsFragment() : Fragment() {
         val bodyText: TextView = rootView.findViewById(R.id.issueBody)
 
         selectedIssue?.let {
+            val dateFormat =
+                DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
+
             numberText.text = getString(R.string.number, it.number)
-            createdText.text = getString(R.string.created_at, it.createdAt)
-            updatedText.text = getString(R.string.updated_at, it.updatedAt.toString())
-            closedText.text = getString(R.string.closed_at, it.closedAt.toString())
+            createdText.text = getString(R.string.created_at, dateFormat.format(it.createdAt))
+            updatedText.text = getString(
+                R.string.updated_at, if (it.updatedAt == null) getString(R.string.null_date) else {
+                    dateFormat.format(it.updatedAt)
+                }
+            )
+            closedText.text = getString(
+                R.string.closed_at, if (it.closedAt == null) getString(R.string.null_date) else {
+                    dateFormat.format(it.closedAt)
+                }
+            )
             titleText.text = it.title
             bodyText.text = it.body
         }
