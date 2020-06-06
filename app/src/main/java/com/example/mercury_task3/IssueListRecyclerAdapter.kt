@@ -7,15 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.issue_item_card.view.*
 import com.сode5150.mercury_task3_network.data.Issue
 
 class IssueListRecyclerAdapter(
-    private val callbackFun: (Int) -> Unit, private val orientation: Int
+    private val callbackFun: (Int) -> Unit,
+    private val orientation: Int,
+    private val selectedPos: MutableLiveData<Int>
 ) : RecyclerView.Adapter<IssueListRecyclerAdapter.ItemHolder>() {
     private var items: List<Issue> = ArrayList()
-    private var selectedPos = RecyclerView.NO_POSITION
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ItemHolder {
         return ItemHolder(
@@ -29,7 +31,7 @@ class IssueListRecyclerAdapter(
         holder.issueNum.text = items[position].number.toString()
         holder.username.text = items[position].user.login
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            if (selectedPos == position) {
+            if (selectedPos.value == position) {
                 holder.card.setBackgroundColor(Color.LTGRAY)
             } else {
                 holder.card.setBackgroundColor(Color.WHITE)
@@ -39,7 +41,6 @@ class IssueListRecyclerAdapter(
 
     fun setItems(newItems: List<Issue>) {
         items = newItems
-        selectedPos = RecyclerView.NO_POSITION
         notifyDataSetChanged()
     }
 
@@ -50,11 +51,11 @@ class IssueListRecyclerAdapter(
         val card: CardView = v.selectableCard
 
         override fun onClick(view: View?) {
-            val prevPos = selectedPos
-            selectedPos = adapterPosition
+            val prevPos = selectedPos.value
+            selectedPos.value = adapterPosition
 
-            notifyItemChanged(prevPos)
-            notifyItemChanged(selectedPos)
+            prevPos?.let { notifyItemChanged(it) }
+            selectedPos.value?.let { notifyItemChanged(it) }
 
             callbackFun(adapterPosition)
         }

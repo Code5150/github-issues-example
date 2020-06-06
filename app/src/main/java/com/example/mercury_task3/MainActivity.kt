@@ -1,6 +1,5 @@
 package com.example.mercury_task3
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
@@ -23,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     private var detailsFragment: DetailsFragment? = null
 
     companion object {
-        const val CLICKED_ISSUE_POS: String = "CLICKED_ISSUE_POS"
+        const val CLICKED_ISSUE: String = "CLICKED_ISSUE"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,27 +37,35 @@ class MainActivity : AppCompatActivity() {
 
         issueViewModel = ViewModelProvider(this).get(IssueViewModel::class.java)
 
+        //Adapter callback
         val onClickFun = { pos: Int ->
+            initFragment(pos)
             if (resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
                 val intent = Intent(this, DetailsActivity::class.java)
-                intent.putExtra(CLICKED_ISSUE_POS, issueViewModel.issuesData.value!![pos])
+                intent.putExtra(CLICKED_ISSUE, issueViewModel.issuesData.value!![pos])
                 startActivity(intent)
             } else {
-                val selected = Bundle()
-                detailsFragment = DetailsFragment()
-                selected.putParcelable(CLICKED_ISSUE_POS, issueViewModel.issuesData.value!![pos])
-                detailsFragment!!.arguments = selected
-                this.supportFragmentManager.beginTransaction().apply {
-                    replace(R.id.fragmentDetails, detailsFragment!!)
-                    commit()
-                }
-                Unit
+                replaceFragment()
             }
         }
 
-        val adapter = IssueListRecyclerAdapter(onClickFun, resources.configuration.orientation)
-
+        val adapter = IssueListRecyclerAdapter(
+            onClickFun,
+            resources.configuration.orientation,
+            issueViewModel.selectedPos
+        )
         repoIssuesRecyclerView.adapter = adapter
+
+        //Clicked issue fragment initialization
+        if (issueViewModel.selectedPos.value != RecyclerView.NO_POSITION &&
+            resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+        ) {
+            issueViewModel.selectedPos.value?.let {
+                initFragment(it)
+                replaceFragment()
+                repoIssuesRecyclerView.smoothScrollToPosition(it)
+            }
+        }
 
         issueViewModel.issuesData.observe(this, Observer {
             if (it != null) {
@@ -69,7 +76,7 @@ class MainActivity : AppCompatActivity() {
 
         issueViewModel.error.observe(this, Observer {
             if (it != null) {
-                setLabelVisibility(it)
+                setErrorLabel(it)
             }
         })
 
@@ -102,11 +109,28 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("SetTextI18n")
-    private fun setLabelVisibility(err: String) {
+    private fun setErrorLabel(err: String) {
         textView.text = getString(R.string.err, err)
         if (textView.visibility == View.INVISIBLE) textView.visibility = View.VISIBLE
         if (repoIssuesRecyclerView.visibility == View.VISIBLE) repoIssuesRecyclerView.visibility =
             View.INVISIBLE
+    }
+
+    private fun initFragment(pos: Int) {
+        val selected = Bundle()
+        selected.putParcelable(CLICKED_ISSUE, issueViewModel.issuesData.value!![pos])
+        detailsFragment = DetailsFragment()
+        detailsFragment?.let {
+            it.arguments = selected
+        }
+    }
+
+    private fun replaceFragment() {
+        detailsFragment?.let {
+            supportFragmentManager.beginTransaction().apply {
+                replace(R.id.fragmentDetails, it)
+                commit()
+            }
+        }
     }
 }

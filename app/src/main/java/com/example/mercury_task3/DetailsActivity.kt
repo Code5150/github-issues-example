@@ -1,21 +1,23 @@
 package com.example.mercury_task3
 
-import android.annotation.SuppressLint
-import androidx.appcompat.app.AppCompatActivity
+import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.TextView
-import androidx.lifecycle.ViewModelProvider
+import androidx.appcompat.app.AppCompatActivity
 import com.сode5150.mercury_task3_network.data.Issue
 
 class DetailsActivity : AppCompatActivity() {
 
-    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val orientation = resources.configuration.orientation
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) finish()
+
         setContentView(R.layout.activity_details)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        val data = intent.getParcelableExtra<Issue>(MainActivity.CLICKED_ISSUE_POS)
+        val data = intent.getParcelableExtra<Issue>(MainActivity.CLICKED_ISSUE)
 
         val numberText: TextView = findViewById(R.id.number)
         val createdText: TextView = findViewById(R.id.created)

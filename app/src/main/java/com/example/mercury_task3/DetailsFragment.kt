@@ -13,13 +13,13 @@ import com.сode5150.mercury_task3_network.data.Issue
  * Use the [DetailsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class DetailsFragment : Fragment() {
+class DetailsFragment() : Fragment() {
     private var selectedIssue: Issue? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            selectedIssue = it.getParcelable(MainActivity.CLICKED_ISSUE_POS)
+            selectedIssue = it.getParcelable(MainActivity.CLICKED_ISSUE)
         }
     }
 
@@ -58,7 +58,7 @@ class DetailsFragment : Fragment() {
         fun newInstance(selected: Issue?) =
             DetailsFragment().apply {
                 arguments = Bundle().apply {
-                    putParcelable(MainActivity.CLICKED_ISSUE_POS, selected)
+                    putParcelable(MainActivity.CLICKED_ISSUE, selected)
                 }
             }
     }
