@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.сode5150.mercury_task3_network.data.Issue
-import java.text.DateFormat
+import java.text.SimpleDateFormat
 
 class DetailsActivity : AppCompatActivity() {
 
@@ -28,8 +28,7 @@ class DetailsActivity : AppCompatActivity() {
         val bodyText: TextView = findViewById(R.id.issueBody)
 
         data?.let {
-            val dateFormat =
-                DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT)
+            val dateFormat = SimpleDateFormat(getString(R.string.date_format))
 
             numberText.text = getString(R.string.number, it.number)
             createdText.text = getString(R.string.created_at, dateFormat.format(it.createdAt))

@@ -6,4 +6,5 @@
     <string name="created_at" formatted="true">Создано: %s</string>
     <string name="updated_at" formatted="true">Обновлено: %s</string>
     <string name="closed_at" formatted="true">Закрыто: %s</string>
+    <string name="date_format">dd MMM yyyy\',\' HH:mm</string>
 </resources>
