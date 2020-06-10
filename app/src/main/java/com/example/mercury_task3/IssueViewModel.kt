@@ -1,15 +1,16 @@
 package com.example.mercury_task3
 
 import android.content.Context
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
-import com.сode5150.mercury_task3_network.data.Issue
-import com.сode5150.mercury_task3_network.GithubApiInterface
-import com.сode5150.task3_database.db.IssuesDB
+import com.сode5150.mercury_task3.database.db.IssuesDB
+import com.сode5150.mercury_task3.network.GithubApiInterface
+import com.сode5150.mercury_task3.network.data.Issue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlin.reflect.typeOf
 
 class IssueViewModel : ViewModel() {
 
@@ -30,8 +31,7 @@ class IssueViewModel : ViewModel() {
 
     val selectedPos: MutableLiveData<Int> = MutableLiveData(RecyclerView.NO_POSITION)
 
-    private val apiService =
-        GithubApiInterface()
+    private val apiService = GithubApiInterface()
 
     private suspend fun getIssuesList(): List<Issue>? {
         var result: List<Issue>? = null

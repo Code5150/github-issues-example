@@ -1,7 +1,7 @@
-package com.сode5150.mercury_task3_network
+package com.сode5150.mercury_task3.network
 
 import com.google.gson.GsonBuilder
-import com.сode5150.mercury_task3_network.data.Issue
+import com.сode5150.mercury_task3.network.data.Issue
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET

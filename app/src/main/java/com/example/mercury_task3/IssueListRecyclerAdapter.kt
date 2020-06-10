@@ -10,7 +10,7 @@ import androidx.cardview.widget.CardView
 import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.issue_item_card.view.*
-import com.сode5150.mercury_task3_network.data.Issue
+import com.сode5150.mercury_task3.network.data.Issue
 
 class IssueListRecyclerAdapter(
     private val callbackFun: (Int) -> Unit,

@@ -11,10 +11,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import androidx.work.BackoffPolicy
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import com.сode5150.mercury_task3.background_work.UpdateWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,6 +32,7 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val CLICKED_ISSUE: String = "CLICKED_ISSUE"
+        const val TASK_ID: String = "UPDATE_ISSUES"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,6 +54,16 @@ class MainActivity : AppCompatActivity() {
             issueViewModel.setListFromDbValues()
             refreshList()
         }
+
+        val work = PeriodicWorkRequestBuilder<UpdateWorker>(15, TimeUnit.MINUTES)
+            .setBackoffCriteria(BackoffPolicy.LINEAR, 10, TimeUnit.SECONDS)
+            .addTag(TASK_ID)
+            .build()
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            TASK_ID,
+            ExistingPeriodicWorkPolicy.KEEP,
+            work
+        )
 
         //Adapter callback
         val onClickFun = { pos: Int ->
@@ -143,7 +160,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun refreshList(){
+    private fun refreshList() {
         CoroutineScope(Dispatchers.IO).launch {
             swipeRefreshLayout.isRefreshing = true
             issueViewModel.updateIssuesList()

@@ -1,4 +1,4 @@
-package com.сode5150.mercury_task3_network.data
+package com.сode5150.mercury_task3.network.data
 
 import android.os.Parcelable
 import androidx.room.ColumnInfo

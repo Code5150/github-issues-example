@@ -1,4 +1,4 @@
-package com.сode5150.task3_database.converters
+package com.сode5150.mercury_task3.database.converters
 
 import androidx.room.TypeConverter
 import java.util.*

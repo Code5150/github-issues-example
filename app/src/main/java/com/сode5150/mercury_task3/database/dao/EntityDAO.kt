@@ -1,8 +1,8 @@
-package com.сode5150.task3_database.dao
+package com.сode5150.mercury_task3.database.dao
 
 import androidx.room.*
-import com.сode5150.mercury_task3_network.data.ISSUES_TABLE_NAME
-import com.сode5150.mercury_task3_network.data.Issue
+import com.сode5150.mercury_task3.network.data.ISSUES_TABLE_NAME
+import com.сode5150.mercury_task3.network.data.Issue
 
 @Dao
 interface EntityDAO {
