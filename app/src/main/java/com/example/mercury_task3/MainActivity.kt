@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var repoIssuesRecyclerView: RecyclerView
     private lateinit var textView: TextView
     private lateinit var issueViewModel: IssueViewModel
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private var detailsFragment: DetailsFragment? = null
 
     companion object {
@@ -37,8 +38,14 @@ class MainActivity : AppCompatActivity() {
 
         textView = findViewById(R.id.textView)
 
+        swipeRefreshLayout = findViewById(R.id.swipeContainer)
+
         issueViewModel = ViewModelProvider(this).get(IssueViewModel::class.java).apply {
             initDatabase(this@MainActivity)
+        }
+        if (issueViewModel.issuesData.value == null) {
+            issueViewModel.setListFromDbValues()
+            refreshList()
         }
 
         //Adapter callback
@@ -87,7 +94,6 @@ class MainActivity : AppCompatActivity() {
         })
 
         //Swipe refresh initialization
-        val swipeRefreshLayout: SwipeRefreshLayout = findViewById(R.id.swipeContainer)
         swipeRefreshLayout.setOnRefreshListener {
             detailsFragment?.let {
                 supportFragmentManager.beginTransaction().apply {
@@ -95,11 +101,7 @@ class MainActivity : AppCompatActivity() {
                     commit()
                 }
             }
-            CoroutineScope(Dispatchers.IO).launch {
-                swipeRefreshLayout.isRefreshing = true
-                issueViewModel.updateIssuesList()
-                swipeRefreshLayout.isRefreshing = false
-            }
+            refreshList()
         }
     }
 
@@ -138,6 +140,14 @@ class MainActivity : AppCompatActivity() {
                 replace(R.id.fragmentDetails, it)
                 commit()
             }
+        }
+    }
+
+    private fun refreshList(){
+        CoroutineScope(Dispatchers.IO).launch {
+            swipeRefreshLayout.isRefreshing = true
+            issueViewModel.updateIssuesList()
+            swipeRefreshLayout.isRefreshing = false
         }
     }
 }

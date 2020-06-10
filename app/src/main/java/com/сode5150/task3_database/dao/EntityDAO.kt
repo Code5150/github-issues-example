@@ -6,7 +6,7 @@ import com.сode5150.mercury_task3_network.data.Issue
 
 @Dao
 interface EntityDAO {
-    @Query("SELECT * FROM $ISSUES_TABLE_NAME")
+    @Query("SELECT * FROM $ISSUES_TABLE_NAME ORDER BY number DESC")
     fun getAllIssues(): List<Issue>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

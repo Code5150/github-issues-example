@@ -9,6 +9,7 @@ import com.сode5150.task3_database.db.IssuesDB
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.reflect.typeOf
 
 class IssueViewModel : ViewModel() {
 
@@ -20,9 +21,7 @@ class IssueViewModel : ViewModel() {
 
     val issuesData: LiveData<List<Issue>?> get() = _issuesData
 
-    private val _issuesData: MutableLiveData<List<Issue>?> = liveData {
-        emit(getIssuesList())
-    } as MutableLiveData<List<Issue>?>
+    private val _issuesData: MutableLiveData<List<Issue>?> = MutableLiveData(null)
 
     private val _error: MutableLiveData<String?> =
         MutableLiveData(null)
@@ -38,27 +37,51 @@ class IssueViewModel : ViewModel() {
         var result: List<Issue>? = null
         try {
             result = apiService.getIssues()
-            database?.let {
-                synchronized(it) {
-                    CoroutineScope(Dispatchers.IO).launch {
-                        with(it.entityDAO()) {
-                            result.forEach { issue -> this?.insertIssue(issue) }
-                        }
-                        it.entityDAO().getAllIssues().forEach { issue -> println(issue.number) }
-                    }
+            saveListToDb(result)
+            if (_error.value != null) _error.postValue(null)
+        } catch (e: Exception) {
+            try {
+                result = getListFromDb()
+            }
+            catch (e: Exception) {
+                _error.postValue(e.message)
+            }
+        } finally {
+            selectedPos.postValue(RecyclerView.NO_POSITION)
+            return result
+        }
+    }
+
+    private fun getListFromDb(): List<Issue>?{
+        var result: List<Issue>? = null
+        database?.let {
+            synchronized(it) {
+                with(it.entityDAO()) {
+                    result = this.getAllIssues()
+                    if (_error.value != null) _error.postValue(null)
                 }
             }
-
-            if (_error.value != null) _error.postValue(null)
-
-        } catch (e: Exception) {
-            _error.postValue(e.message)
         }
-        selectedPos.postValue(RecyclerView.NO_POSITION)
         return result
+    }
+
+    private fun saveListToDb(list: List<Issue>){
+        database?.let {
+            synchronized(it) {
+                with(it.entityDAO()) {
+                    list.let{ res -> res.forEach { issue -> this.insertIssue(issue) }}
+                }
+            }
+        }
     }
 
     suspend fun updateIssuesList() {
         _issuesData.postValue(getIssuesList())
+    }
+
+    fun setListFromDbValues(){
+        CoroutineScope(Dispatchers.IO).launch {
+            _issuesData.postValue(getListFromDb())
+        }
     }
 }
