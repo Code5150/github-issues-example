@@ -15,7 +15,7 @@ abstract class IssuesDB : RoomDatabase() {
     abstract fun entityDAO(): EntityDAO
 
     companion object{
-        var INSTANCE: IssuesDB? = null
+        private var INSTANCE: IssuesDB? = null
 
         fun getIssuesDB(context: Context): IssuesDB? {
             if (INSTANCE == null){

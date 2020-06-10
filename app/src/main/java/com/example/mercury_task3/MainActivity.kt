@@ -11,6 +11,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -35,7 +37,9 @@ class MainActivity : AppCompatActivity() {
 
         textView = findViewById(R.id.textView)
 
-        issueViewModel = ViewModelProvider(this).get(IssueViewModel::class.java)
+        issueViewModel = ViewModelProvider(this).get(IssueViewModel::class.java).apply {
+            initDatabase(this@MainActivity)
+        }
 
         //Adapter callback
         val onClickFun = { pos: Int ->
@@ -49,6 +53,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        //Adapter initialization
         val adapter = IssueListRecyclerAdapter(
             onClickFun,
             resources.configuration.orientation,
@@ -67,6 +72,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        //Setting data observers
         issueViewModel.issuesData.observe(this, Observer {
             if (it != null) {
                 adapter.setItems(it)
@@ -80,6 +86,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        //Swipe refresh initialization
         val swipeRefreshLayout: SwipeRefreshLayout = findViewById(R.id.swipeContainer)
         swipeRefreshLayout.setOnRefreshListener {
             detailsFragment?.let {
@@ -88,7 +95,7 @@ class MainActivity : AppCompatActivity() {
                     commit()
                 }
             }
-            GlobalScope.launch {
+            CoroutineScope(Dispatchers.IO).launch {
                 swipeRefreshLayout.isRefreshing = true
                 issueViewModel.updateIssuesList()
                 swipeRefreshLayout.isRefreshing = false

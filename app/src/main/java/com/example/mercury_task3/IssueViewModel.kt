@@ -1,11 +1,22 @@
 package com.example.mercury_task3
 
+import android.content.Context
 import androidx.lifecycle.*
 import androidx.recyclerview.widget.RecyclerView
 import com.сode5150.mercury_task3_network.data.Issue
 import com.сode5150.mercury_task3_network.GithubApiInterface
+import com.сode5150.task3_database.db.IssuesDB
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class IssueViewModel : ViewModel() {
+
+    private var database: IssuesDB? = null
+
+    fun initDatabase(context: Context) {
+        database = IssuesDB.getIssuesDB(context)
+    }
 
     val issuesData: LiveData<List<Issue>?> get() = _issuesData
 
@@ -27,6 +38,17 @@ class IssueViewModel : ViewModel() {
         var result: List<Issue>? = null
         try {
             result = apiService.getIssues()
+            database?.let {
+                synchronized(it) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        with(it.entityDAO()) {
+                            result.forEach { issue -> this?.insertIssue(issue) }
+                        }
+                        it.entityDAO().getAllIssues().forEach { issue -> println(issue.number) }
+                    }
+                }
+            }
+
             if (_error.value != null) _error.postValue(null)
 
         } catch (e: Exception) {
