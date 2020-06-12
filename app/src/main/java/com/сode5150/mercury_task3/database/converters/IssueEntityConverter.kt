@@ -1,6 +1,5 @@
 package com.сode5150.mercury_task3.database.converters
 
-import androidx.room.TypeConverter
 import com.сode5150.mercury_task3.database.entities.IssueEntity
 import com.сode5150.mercury_task3.network.data.Issue
 import com.сode5150.mercury_task3.network.data.User

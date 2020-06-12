@@ -5,7 +5,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.сode5150.mercury_task3.network.data.Issue
 import com.сode5150.mercury_task3.database.converters.DateTypeConverter
 import com.сode5150.mercury_task3.database.dao.EntityDAO
 import com.сode5150.mercury_task3.database.entities.IssueEntity
@@ -15,19 +14,23 @@ import com.сode5150.mercury_task3.database.entities.IssueEntity
 abstract class IssuesDB : RoomDatabase() {
     abstract fun entityDAO(): EntityDAO
 
-    companion object{
+    companion object {
         private var INSTANCE: IssuesDB? = null
 
         fun getIssuesDB(context: Context): IssuesDB? {
-            if (INSTANCE == null){
-                synchronized(IssuesDB::class){
-                    INSTANCE = Room.databaseBuilder(context.applicationContext, IssuesDB::class.java, "IssuesDB").build()
+            if (INSTANCE == null) {
+                synchronized(IssuesDB::class) {
+                    INSTANCE = Room.databaseBuilder(
+                        context.applicationContext,
+                        IssuesDB::class.java,
+                        "IssuesDB"
+                    ).build()
                 }
             }
             return INSTANCE
         }
 
-        fun destroyDB(){
+        fun destroyDB() {
             INSTANCE = null
         }
     }

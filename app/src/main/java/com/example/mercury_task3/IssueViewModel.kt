@@ -5,8 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
-import com.сode5150.mercury_task3.database.db.IssuesDB
-import com.сode5150.mercury_task3.network.GithubApiInterface
 import com.сode5150.mercury_task3.network.data.Issue
 import com.сode5150.mercury_task3.repository.IssueRepository
 import kotlinx.coroutines.CoroutineScope

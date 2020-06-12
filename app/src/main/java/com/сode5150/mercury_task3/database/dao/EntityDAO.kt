@@ -3,7 +3,6 @@ package com.сode5150.mercury_task3.database.dao
 import androidx.room.*
 import com.сode5150.mercury_task3.database.entities.ISSUES_TABLE_NAME
 import com.сode5150.mercury_task3.database.entities.IssueEntity
-import com.сode5150.mercury_task3.network.data.Issue
 
 @Dao
 interface EntityDAO {

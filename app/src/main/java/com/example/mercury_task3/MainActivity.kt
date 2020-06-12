@@ -18,7 +18,6 @@ import androidx.work.WorkManager
 import com.сode5150.mercury_task3.background_work.UpdateWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
@@ -48,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         swipeRefreshLayout = findViewById(R.id.swipeContainer)
 
         issueViewModel = ViewModelProvider(this).get(IssueViewModel::class.java).apply {
-            initDatabase(this@MainActivity)
+            initDatabase(applicationContext)
         }
         if (issueViewModel.issuesData.value == null) {
             issueViewModel.setListFromDbValues()
@@ -59,7 +58,7 @@ class MainActivity : AppCompatActivity() {
             .setBackoffCriteria(BackoffPolicy.LINEAR, 10, TimeUnit.SECONDS)
             .addTag(TASK_ID)
             .build()
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+        WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
             TASK_ID,
             ExistingPeriodicWorkPolicy.KEEP,
             work
