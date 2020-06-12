@@ -14,7 +14,8 @@ class IssueEntityConverter {
                 issue.closedAt,
                 issue.title,
                 issue.body,
-                issue.user.login
+                issue.user.login,
+                issue.state
             )
         }
 
@@ -26,7 +27,8 @@ class IssueEntityConverter {
                 issue.closedAt,
                 issue.title,
                 issue.body,
-                User(issue.login)
+                User(issue.login),
+                issue.state
             )
         }
     }

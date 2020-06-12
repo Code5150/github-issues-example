@@ -4,6 +4,9 @@ import android.content.Intent
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.Observer
@@ -116,6 +119,32 @@ class MainActivity : AppCompatActivity() {
             }
             refreshList()
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+        inflater.inflate(R.menu.issues_state_menu, menu)
+        menu?.findItem(R.id.stateAll)?.isChecked  = true
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.stateOpen -> {
+                item.isChecked = !item.isChecked
+                issueViewModel.filterOnlyOpen()
+            }
+            R.id.stateClosed -> {
+                item.isChecked = !item.isChecked
+                issueViewModel.filterOnlyClosed()
+            }
+            R.id.stateAll -> {
+                item.isChecked = !item.isChecked
+                issueViewModel.setListFromDbValues()
+            }
+            else -> Log.d("WHAT", "Unknown item selected")
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun setRecyclerVisibility(size: Int) {

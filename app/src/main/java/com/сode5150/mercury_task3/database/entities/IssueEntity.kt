@@ -14,5 +14,6 @@ data class IssueEntity (
     @ColumnInfo(name = "closed_at") val closedAt: Date?,
     val title: String,
     val body: String,
-    val login: String
+    val login: String,
+    val state: String
 )

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.issue_item_card.view.*
 import com.сode5150.mercury_task3.network.data.Issue
@@ -40,8 +41,27 @@ class IssueListRecyclerAdapter(
     }
 
     fun setItems(newItems: List<Issue>) {
+        val oldItems = items
+        val diffResult = DiffUtil.calculateDiff(
+            ItemDiffCallback(oldItems, newItems)
+        )
         items = newItems
-        notifyDataSetChanged()
+        diffResult.dispatchUpdatesTo(this)
+    }
+
+    inner class ItemDiffCallback(private val oldList: List<Issue>, private val newList: List<Issue>):DiffUtil.Callback(){
+        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition].number == newList[newItemPosition].number
+        }
+
+        override fun getOldListSize(): Int = oldList.size
+
+        override fun getNewListSize(): Int = newList.size
+
+        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+            return oldList[oldItemPosition] == newList[newItemPosition]
+        }
+
     }
 
     inner class ItemHolder(v: View) : RecyclerView.ViewHolder(v), View.OnClickListener {

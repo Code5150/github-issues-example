@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.RecyclerView
 import com.сode5150.mercury_task3.network.data.Issue
+import com.сode5150.mercury_task3.network.data.STATE_CLOSED
+import com.сode5150.mercury_task3.network.data.STATE_OPEN
 import com.сode5150.mercury_task3.repository.IssueRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,6 +57,18 @@ class IssueViewModel : ViewModel() {
     fun setListFromDbValues(){
         CoroutineScope(Dispatchers.IO).launch {
             _issuesData.postValue(repository.getListFromDb())
+        }
+    }
+
+    fun filterOnlyOpen(){
+        CoroutineScope(Dispatchers.IO).launch {
+            _issuesData.postValue(repository.getListFromDb()?.filter { it.state == STATE_OPEN })
+        }
+    }
+
+    fun filterOnlyClosed(){
+        CoroutineScope(Dispatchers.IO).launch {
+            _issuesData.postValue(repository.getListFromDb()?.filter { it.state == STATE_CLOSED })
         }
     }
 }
