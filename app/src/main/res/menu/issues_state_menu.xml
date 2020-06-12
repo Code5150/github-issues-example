@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/stateOpen"
+        android:title="@string/open"/>
+    <item
+        android:id="@+id/stateClosed"
+        android:title="@string/closed"/>
+    <item
+        android:id="@+id/stateAll"
+        android:title="@string/all"/>
+</menu>

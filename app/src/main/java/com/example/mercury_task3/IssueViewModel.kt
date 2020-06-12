@@ -13,8 +13,10 @@ import kotlinx.coroutines.launch
 
 class IssueViewModel : ViewModel() {
 
-    fun initDatabase(context: Context) {
-        IssueRepository.initDatabase(context)
+    private lateinit var repository: IssueRepository
+
+    fun initRepository(context: Context) {
+        repository = IssueRepository(context)
     }
 
     val issuesData: LiveData<List<Issue>?> get() = _issuesData
@@ -31,11 +33,11 @@ class IssueViewModel : ViewModel() {
     private suspend fun getIssuesList(): List<Issue>? {
         var result: List<Issue>? = null
         try {
-            result = IssueRepository.getIssuesFromGithub()
+            result = repository.getIssuesFromGithub()
             if (_error.value != null) _error.postValue(null)
         } catch (e: Exception) {
             try {
-                result = IssueRepository.getListFromDb()
+                result = repository.getListFromDb()
             }
             catch (e: Exception) {
                 _error.postValue(e.message)
@@ -52,7 +54,7 @@ class IssueViewModel : ViewModel() {
 
     fun setListFromDbValues(){
         CoroutineScope(Dispatchers.IO).launch {
-            _issuesData.postValue(IssueRepository.getListFromDb())
+            _issuesData.postValue(repository.getListFromDb())
         }
     }
 }

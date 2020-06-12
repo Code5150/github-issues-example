@@ -11,10 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.work.BackoffPolicy
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
+import androidx.work.*
 import com.сode5150.mercury_task3.background_work.UpdateWorker
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,15 +44,15 @@ class MainActivity : AppCompatActivity() {
         swipeRefreshLayout = findViewById(R.id.swipeContainer)
 
         issueViewModel = ViewModelProvider(this).get(IssueViewModel::class.java).apply {
-            initDatabase(applicationContext)
+            initRepository(applicationContext)
         }
         if (issueViewModel.issuesData.value == null) {
             issueViewModel.setListFromDbValues()
             refreshList()
         }
 
-        val work = PeriodicWorkRequestBuilder<UpdateWorker>(15, TimeUnit.MINUTES)
-            .setBackoffCriteria(BackoffPolicy.LINEAR, 10, TimeUnit.SECONDS)
+        val work = PeriodicWorkRequestBuilder<UpdateWorker>(PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS, TimeUnit.MINUTES)
+            .setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.SECONDS)
             .addTag(TASK_ID)
             .build()
         WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(

@@ -9,4 +9,7 @@
     <string name="updated_at" formatted="true">Updated at: %s</string>
     <string name="closed_at" formatted="true">Closed at: %s</string>
     <string name="date_format">MMM d yyyy\',\' h:mm a</string>
+    <string name="open">Open</string>
+    <string name="closed">Closed</string>
+    <string name="all">All</string>
 </resources>
