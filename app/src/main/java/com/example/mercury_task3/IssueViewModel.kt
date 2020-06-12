@@ -8,16 +8,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.сode5150.mercury_task3.database.db.IssuesDB
 import com.сode5150.mercury_task3.network.GithubApiInterface
 import com.сode5150.mercury_task3.network.data.Issue
+import com.сode5150.mercury_task3.repository.IssueRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class IssueViewModel : ViewModel() {
 
-    private var database: IssuesDB? = null
-
     fun initDatabase(context: Context) {
-        database = IssuesDB.getIssuesDB(context)
+        IssueRepository.initDatabase(context)
     }
 
     val issuesData: LiveData<List<Issue>?> get() = _issuesData
@@ -31,17 +30,14 @@ class IssueViewModel : ViewModel() {
 
     val selectedPos: MutableLiveData<Int> = MutableLiveData(RecyclerView.NO_POSITION)
 
-    private val apiService = GithubApiInterface()
-
     private suspend fun getIssuesList(): List<Issue>? {
         var result: List<Issue>? = null
         try {
-            result = apiService.getIssues()
-            saveListToDb(result)
+            result = IssueRepository.getIssuesFromGithub()
             if (_error.value != null) _error.postValue(null)
         } catch (e: Exception) {
             try {
-                result = getListFromDb()
+                result = IssueRepository.getListFromDb()
             }
             catch (e: Exception) {
                 _error.postValue(e.message)
@@ -52,36 +48,13 @@ class IssueViewModel : ViewModel() {
         }
     }
 
-    private fun getListFromDb(): List<Issue>?{
-        var result: List<Issue>? = null
-        database?.let {
-            synchronized(it) {
-                with(it.entityDAO()) {
-                    result = this.getAllIssues()
-                    if (_error.value != null) _error.postValue(null)
-                }
-            }
-        }
-        return result
-    }
-
-    private fun saveListToDb(list: List<Issue>){
-        database?.let {
-            synchronized(it) {
-                with(it.entityDAO()) {
-                    list.let{ res -> res.forEach { issue -> this.insertIssue(issue) }}
-                }
-            }
-        }
-    }
-
     suspend fun updateIssuesList() {
         _issuesData.postValue(getIssuesList())
     }
 
     fun setListFromDbValues(){
         CoroutineScope(Dispatchers.IO).launch {
-            _issuesData.postValue(getListFromDb())
+            _issuesData.postValue(IssueRepository.getListFromDb())
         }
     }
 }

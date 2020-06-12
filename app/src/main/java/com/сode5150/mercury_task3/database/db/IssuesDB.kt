@@ -8,8 +8,9 @@ import androidx.room.TypeConverters
 import com.сode5150.mercury_task3.network.data.Issue
 import com.сode5150.mercury_task3.database.converters.DateTypeConverter
 import com.сode5150.mercury_task3.database.dao.EntityDAO
+import com.сode5150.mercury_task3.database.entities.IssueEntity
 
-@Database(entities = [Issue::class], version = 1)
+@Database(entities = [IssueEntity::class], version = 1)
 @TypeConverters(DateTypeConverter::class)
 abstract class IssuesDB : RoomDatabase() {
     abstract fun entityDAO(): EntityDAO
