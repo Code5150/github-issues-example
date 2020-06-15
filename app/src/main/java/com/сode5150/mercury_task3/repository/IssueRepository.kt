@@ -1,25 +1,28 @@
 package com.сode5150.mercury_task3.repository
 
 import android.content.Context
+import android.util.Log
 import com.example.mercury_task3.IssueViewModel
 import com.сode5150.mercury_task3.database.converters.IssueEntityConverter
 import com.сode5150.mercury_task3.database.db.IssuesDB
 import com.сode5150.mercury_task3.network.GithubApiInterface
 import com.сode5150.mercury_task3.network.data.Issue
 
-class IssueRepository(context: Context) {
+class IssueRepository(context: Context, private val callback: ((List<Issue>?)->Unit)?) {
 
     private var database: IssuesDB? = IssuesDB.getIssuesDB(context)
 
     private val apiService = GithubApiInterface()
 
-    suspend fun getIssuesFromGithub(): List<Issue>? {
-        val result = apiService.getIssues()
-        saveListToDb(result)
-        return result
+    suspend fun getData(){
+        callback?.let { it(getListFromDb()) }
+        val result: List<Issue>? = apiService.getIssues()
+        result?.let { saveListToDb(it) }
+        callback?.let { it(result) }
     }
 
-    fun saveListToDb(list: List<Issue>) {
+
+    private fun saveListToDb(list: List<Issue>) {
         database?.let {
             synchronized(it) {
                 with(it.entityDAO()) {
@@ -35,7 +38,7 @@ class IssueRepository(context: Context) {
         }
     }
 
-    fun getListFromDb(): List<Issue>? {
+    private fun getListFromDb(): List<Issue>? {
         var result: List<Issue>? = null
         database?.let {
             synchronized(it) {

@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.work.*
 import com.сode5150.mercury_task3.background_work.UpdateWorker
+import com.сode5150.mercury_task3.network.data.STATE_CLOSED
+import com.сode5150.mercury_task3.network.data.STATE_OPEN
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -27,6 +29,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var textView: TextView
     private lateinit var issueViewModel: IssueViewModel
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var adapter: IssueListRecyclerAdapter
     private var detailsFragment: DetailsFragment? = null
 
     companion object {
@@ -49,10 +52,8 @@ class MainActivity : AppCompatActivity() {
         issueViewModel = ViewModelProvider(this).get(IssueViewModel::class.java).apply {
             initRepository(applicationContext)
         }
-        if (issueViewModel.issuesData.value == null) {
-            issueViewModel.setListFromDbValues()
-            refreshList()
-        }
+        if (issueViewModel.issuesData.value == null) refreshList()
+
 
         val work = PeriodicWorkRequestBuilder<UpdateWorker>(PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS, TimeUnit.MINUTES)
             .setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.SECONDS)
@@ -77,7 +78,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         //Adapter initialization
-        val adapter = IssueListRecyclerAdapter(
+        adapter = IssueListRecyclerAdapter(
             onClickFun,
             resources.configuration.orientation,
             issueViewModel.selectedPos
@@ -132,15 +133,21 @@ class MainActivity : AppCompatActivity() {
         when(item.itemId){
             R.id.stateOpen -> {
                 item.isChecked = !item.isChecked
-                issueViewModel.filterOnlyOpen()
+                issueViewModel.issuesData.value?.let{
+                    adapter.setItems(it.filter { issue ->  issue.state == STATE_OPEN })
+                }
             }
             R.id.stateClosed -> {
                 item.isChecked = !item.isChecked
-                issueViewModel.filterOnlyClosed()
+                issueViewModel.issuesData.value?.let{
+                    adapter.setItems(it.filter { issue ->  issue.state == STATE_CLOSED })
+                }
             }
             R.id.stateAll -> {
                 item.isChecked = !item.isChecked
-                issueViewModel.setListFromDbValues()
+                issueViewModel.issuesData.value?.let{
+                    adapter.setItems(it)
+                }
             }
             else -> Log.d("WHAT", "Unknown item selected")
         }

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import androidx.recyclerview.widget.RecyclerView
 import com.сode5150.mercury_task3.network.data.Issue
 import com.сode5150.mercury_task3.network.data.STATE_CLOSED
@@ -17,8 +18,10 @@ class IssueViewModel : ViewModel() {
 
     private lateinit var repository: IssueRepository
 
+    private val getListCallback = { list: List<Issue>? -> _issuesData.postValue(list) }
+
     fun initRepository(context: Context) {
-        repository = IssueRepository(context)
+        repository = IssueRepository(context, getListCallback)
     }
 
     val issuesData: LiveData<List<Issue>?> get() = _issuesData
@@ -32,43 +35,14 @@ class IssueViewModel : ViewModel() {
 
     val selectedPos: MutableLiveData<Int> = MutableLiveData(RecyclerView.NO_POSITION)
 
-    private suspend fun getIssuesList(): List<Issue>? {
-        var result: List<Issue>? = null
+    suspend fun updateIssuesList() {
         try {
-            result = repository.getIssuesFromGithub()
+            repository.getData()
             if (_error.value != null) _error.postValue(null)
         } catch (e: Exception) {
-            try {
-                result = repository.getListFromDb()
-            }
-            catch (e: Exception) {
-                _error.postValue(e.message)
-            }
+            _error.postValue(e.message)
         } finally {
             selectedPos.postValue(RecyclerView.NO_POSITION)
-            return result
-        }
-    }
-
-    suspend fun updateIssuesList() {
-        _issuesData.postValue(getIssuesList())
-    }
-
-    fun setListFromDbValues(){
-        CoroutineScope(Dispatchers.IO).launch {
-            _issuesData.postValue(repository.getListFromDb())
-        }
-    }
-
-    fun filterOnlyOpen(){
-        CoroutineScope(Dispatchers.IO).launch {
-            _issuesData.postValue(repository.getListFromDb()?.filter { it.state == STATE_OPEN })
-        }
-    }
-
-    fun filterOnlyClosed(){
-        CoroutineScope(Dispatchers.IO).launch {
-            _issuesData.postValue(repository.getListFromDb()?.filter { it.state == STATE_CLOSED })
         }
     }
 }

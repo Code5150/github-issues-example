@@ -12,8 +12,8 @@ class UpdateWorker(appContext: Context, workerParams: WorkerParameters) :
 
     override suspend fun doWork(): Result {
         try {
-            val repo = IssueRepository(applicationContext)
-            repo.getIssuesFromGithub()?.let { repo.saveListToDb(it) }
+            val repo = IssueRepository(applicationContext, null)
+            repo.getData()
             Log.d(logTag, "DB background update succeeded")
             return Result.success()
         } catch (e: Exception) {
