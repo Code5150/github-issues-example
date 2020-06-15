@@ -40,16 +40,25 @@ class IssueListRecyclerAdapter(
         }
     }
 
-    fun setItems(newItems: List<Issue>) {
-        val oldItems = items
+    fun setItems(newItems: List<Issue>, oldItems: List<Issue> = items) {
         val diffResult = DiffUtil.calculateDiff(
             ItemDiffCallback(oldItems, newItems)
         )
+        if (oldItems.isNotEmpty()) {
+            if (selectedPos.value!! >= 0) {
+                val pos = selectedPos.value!!
+                selectedPos.value = diffResult.convertOldPositionToNew(selectedPos.value!!)
+                notifyItemChanged(pos)
+            }
+        }
         items = newItems
         diffResult.dispatchUpdatesTo(this)
     }
 
-    inner class ItemDiffCallback(private val oldList: List<Issue>, private val newList: List<Issue>):DiffUtil.Callback(){
+    inner class ItemDiffCallback(
+        private val oldList: List<Issue>,
+        private val newList: List<Issue>
+    ) : DiffUtil.Callback() {
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
             return oldList[oldItemPosition].number == newList[newItemPosition].number
         }

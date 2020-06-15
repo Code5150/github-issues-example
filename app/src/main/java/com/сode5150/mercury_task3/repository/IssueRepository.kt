@@ -8,19 +8,18 @@ import com.сode5150.mercury_task3.database.db.IssuesDB
 import com.сode5150.mercury_task3.network.GithubApiInterface
 import com.сode5150.mercury_task3.network.data.Issue
 
-class IssueRepository(context: Context, private val callback: ((List<Issue>?)->Unit)?) {
+class IssueRepository(context: Context, private val callback: ((List<Issue>?) -> Unit)?) {
 
     private var database: IssuesDB? = IssuesDB.getIssuesDB(context)
 
     private val apiService = GithubApiInterface()
 
-    suspend fun getData(){
+    suspend fun getData() {
         callback?.let { it(getListFromDb()) }
         val result: List<Issue>? = apiService.getIssues()
         result?.let { saveListToDb(it) }
         callback?.let { it(result) }
     }
-
 
     private fun saveListToDb(list: List<Issue>) {
         database?.let {

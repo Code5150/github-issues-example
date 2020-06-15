@@ -18,7 +18,10 @@ class IssueViewModel : ViewModel() {
 
     private lateinit var repository: IssueRepository
 
-    private val getListCallback = { list: List<Issue>? -> _issuesData.postValue(list) }
+    private val getListCallback = { list: List<Issue>? ->
+        origData.postValue(list)
+        _issuesData.postValue(list)
+    }
 
     fun initRepository(context: Context) {
         repository = IssueRepository(context, getListCallback)
@@ -27,6 +30,8 @@ class IssueViewModel : ViewModel() {
     val issuesData: LiveData<List<Issue>?> get() = _issuesData
 
     private val _issuesData: MutableLiveData<List<Issue>?> = MutableLiveData(null)
+
+    private val origData: MutableLiveData<List<Issue>?> = MutableLiveData(null)
 
     private val _error: MutableLiveData<String?> =
         MutableLiveData(null)
@@ -40,9 +45,22 @@ class IssueViewModel : ViewModel() {
             repository.getData()
             if (_error.value != null) _error.postValue(null)
         } catch (e: Exception) {
-            _error.postValue(e.message)
+            if (_issuesData.value != null) _error.postValue(null)
+            else _error.postValue(e.message)
         } finally {
             selectedPos.postValue(RecyclerView.NO_POSITION)
         }
+    }
+
+    fun setAll() {
+        _issuesData.postValue(origData.value)
+    }
+
+    fun setOpen() {
+        _issuesData.postValue(origData.value?.filter { issue -> issue.state == STATE_OPEN })
+    }
+
+    fun setClosed() {
+        _issuesData.postValue(origData.value?.filter { issue -> issue.state == STATE_CLOSED })
     }
 }

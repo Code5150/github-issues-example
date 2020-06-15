@@ -16,8 +16,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.work.*
 import com.сode5150.mercury_task3.background_work.UpdateWorker
-import com.сode5150.mercury_task3.network.data.STATE_CLOSED
-import com.сode5150.mercury_task3.network.data.STATE_OPEN
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -55,8 +53,15 @@ class MainActivity : AppCompatActivity() {
         if (issueViewModel.issuesData.value == null) refreshList()
 
 
-        val work = PeriodicWorkRequestBuilder<UpdateWorker>(PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS, TimeUnit.MINUTES)
-            .setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.SECONDS)
+        val work = PeriodicWorkRequestBuilder<UpdateWorker>(
+            PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS,
+            TimeUnit.MINUTES
+        )
+            .setBackoffCriteria(
+                BackoffPolicy.LINEAR,
+                PeriodicWorkRequest.MIN_BACKOFF_MILLIS,
+                TimeUnit.SECONDS
+            )
             .addTag(TASK_ID)
             .build()
         WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
@@ -100,6 +105,7 @@ class MainActivity : AppCompatActivity() {
         issueViewModel.issuesData.observe(this, Observer {
             if (it != null) {
                 adapter.setItems(it)
+                if (issueViewModel.selectedPos.value!! == RecyclerView.NO_POSITION) removeFragment()
                 setRecyclerVisibility(it.size)
             }
         })
@@ -112,12 +118,7 @@ class MainActivity : AppCompatActivity() {
 
         //Swipe refresh initialization
         swipeRefreshLayout.setOnRefreshListener {
-            detailsFragment?.let {
-                supportFragmentManager.beginTransaction().apply {
-                    remove(it)
-                    commit()
-                }
-            }
+            removeFragment()
             refreshList()
         }
     }
@@ -125,29 +126,23 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val inflater = menuInflater
         inflater.inflate(R.menu.issues_state_menu, menu)
-        menu?.findItem(R.id.stateAll)?.isChecked  = true
+        menu?.findItem(R.id.stateAll)?.isChecked = true
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             R.id.stateOpen -> {
                 item.isChecked = !item.isChecked
-                issueViewModel.issuesData.value?.let{
-                    adapter.setItems(it.filter { issue ->  issue.state == STATE_OPEN })
-                }
+                issueViewModel.setOpen()
             }
             R.id.stateClosed -> {
                 item.isChecked = !item.isChecked
-                issueViewModel.issuesData.value?.let{
-                    adapter.setItems(it.filter { issue ->  issue.state == STATE_CLOSED })
-                }
+                issueViewModel.setClosed()
             }
             R.id.stateAll -> {
                 item.isChecked = !item.isChecked
-                issueViewModel.issuesData.value?.let{
-                    adapter.setItems(it)
-                }
+                issueViewModel.setAll()
             }
             else -> Log.d("WHAT", "Unknown item selected")
         }
@@ -187,6 +182,15 @@ class MainActivity : AppCompatActivity() {
         detailsFragment?.let {
             supportFragmentManager.beginTransaction().apply {
                 replace(R.id.fragmentDetails, it)
+                commit()
+            }
+        }
+    }
+
+    private fun removeFragment() {
+        detailsFragment?.let {
+            supportFragmentManager.beginTransaction().apply {
+                remove(it)
                 commit()
             }
         }

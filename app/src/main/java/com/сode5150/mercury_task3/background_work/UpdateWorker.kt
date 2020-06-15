@@ -21,7 +21,8 @@ class UpdateWorker(appContext: Context, workerParams: WorkerParameters) :
             return Result.retry()
         }
     }
-    companion object{
+
+    companion object {
         private const val logTag: String = "UPDATE_WORKER"
     }
 }
