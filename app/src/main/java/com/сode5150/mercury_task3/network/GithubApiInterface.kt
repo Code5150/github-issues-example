@@ -1,7 +1,7 @@
-package com.сode5150.mercury_task3_network
+package com.сode5150.mercury_task3.network
 
 import com.google.gson.GsonBuilder
-import com.сode5150.mercury_task3_network.data.Issue
+import com.сode5150.mercury_task3.network.data.Issue
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -14,7 +14,7 @@ const val ISSUES: String = "repos/$USER/$REPO/issues"
 
 interface GithubApiInterface {
     @GET(ISSUES)
-    suspend fun getIssues(@Query("state") state: String = "open"): List<Issue>
+    suspend fun getIssues(@Query("state") state: String = "all"): List<Issue>
 
     companion object {
         operator fun invoke(): GithubApiInterface {

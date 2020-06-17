@@ -4,7 +4,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.сode5150.mercury_task3_network.data.Issue
+import com.сode5150.mercury_task3.network.data.Issue
 import java.text.SimpleDateFormat
 
 class DetailsActivity : AppCompatActivity() {

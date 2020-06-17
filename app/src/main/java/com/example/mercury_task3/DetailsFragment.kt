@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import com.сode5150.mercury_task3_network.data.Issue
+import com.сode5150.mercury_task3.network.data.Issue
 import java.text.SimpleDateFormat
 
 /**
